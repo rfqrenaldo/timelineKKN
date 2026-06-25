@@ -275,7 +275,8 @@ function upsertLocalEntry(entry) {
 function deleteLocalEntry(entryId) {
   const entries = getLocalEntries().filter((entry) => entry.id !== entryId);
   setLocalEntries(entries);
-  mergeSharedEntries();
+  const shared = getSharedEntries().filter((entry) => entry.id !== entryId);
+  setSharedEntries(shared);
 }
 
 async function collectEntriesForMember() {
