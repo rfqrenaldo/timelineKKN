@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timeline Utama | Gunung Kelir</title>
+    <meta name="description" content="Kalender timeline utama proker KKN Sub Unit Gunung Kelir." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <p class="eyebrow">KKN Sub Unit Gunung Kelir</p>
+        <h1 id="page-title"></h1>
+        <p class="hero-copy" id="page-subtitle"></p>
+        <div class="hero-actions">
+          <a class="btn primary" href="index.html">Kembali ke Beranda</a>
+          <a class="btn secondary" href="naldo.html">Naldo</a>
+          <a class="btn secondary" href="hafiz.html">Hafiz</a>
+          <a class="btn secondary" href="rachma.html">Rachma</a>
+          <a class="btn secondary" href="livia.html">Livia</a>
+          <a class="btn secondary" href="laras.html">Laras</a>
+          <a class="btn secondary" href="tata.html">Tata</a>
+        </div>
+      </header>
+
+      <nav class="nav" id="page-nav"></nav>
+
+      <section class="panel">
+        <p class="section-note" id="page-summary"></p>
+        <div id="calendar-list"></div>
+      </section>
+    </div>
+
+    <script>
+      window.PAGE_CONFIG = {
+        mode: 'shared',
+        title: 'Timeline Utama',
+        subtitle: 'Timeline bersama untuk 6 orang. Jika jamnya sama, tiap orang tetap tampil di baris masing-masing.',
+        summary: 'Tampilan ini memakai konsep baris anggota dan kolom jam, jadi cocok untuk timeline proker yang berjalan bareng.',
+        sharedTitle: 'Senin, 29 Juni 2026',
+        sharedLegend: 'Contoh tampilan timeline bersama. Blok waktu bisa saling overlap antar anggota.',
+        sharedMembers: ['Naldo', 'Hafiz', 'Rachma', 'Livia', 'Laras', 'Tata'],
+        sharedSchedule: [
+          {
+            member: 'Naldo',
+            blocks: [
+              { start: 7, end: 10, label: 'Koordinasi' },
+              { start: 13, end: 15, label: 'Lapangan' },
+              { start: 16, end: 18, label: 'Evaluasi' },
+            ],
+          },
+          {
+            member: 'Hafiz',
+            blocks: [
+              { start: 8, end: 11, label: 'Dokumentasi' },
+              { start: 12, end: 14, label: 'Publikasi' },
+              { start: 16, end: 18, label: 'Rekap' },
+            ],
+          },
+          {
+            member: 'Rachma',
+            blocks: [
+              { start: 9, end: 11, label: 'Administrasi' },
+              { start: 13, end: 15, label: 'Surat' },
+              { start: 17, end: 19, label: 'Laporan' },
+            ],
+          },
+          {
+            member: 'Livia',
+            blocks: [
+              { start: 8, end: 10, label: 'Desain' },
+              { start: 10, end: 13, label: 'Media' },
+              { start: 14, end: 17, label: 'Publikasi' },
+            ],
+          },
+          {
+            member: 'Laras',
+            blocks: [
+              { start: 8, end: 11, label: 'Perlengkapan' },
+              { start: 13, end: 16, label: 'Konsumsi' },
+              { start: 17, end: 18, label: 'Cek stok' },
+            ],
+          },
+          {
+            member: 'Tata',
+            blocks: [
+              { start: 8, end: 10, label: 'Notulensi' },
+              { start: 10, end: 14, label: 'Evaluasi' },
+              { start: 15, end: 17, label: 'Rekap' },
+            ],
+          },
+        ],
+        navLinks: [
+          { label: 'Beranda', href: 'index.html' },
+          { label: 'Timeline', href: 'timeline.html' },
+          { label: 'Naldo', href: 'naldo.html' },
+          { label: 'Hafiz', href: 'hafiz.html' },
+          { label: 'Rachma', href: 'rachma.html' },
+          { label: 'Livia', href: 'livia.html' },
+          { label: 'Laras', href: 'laras.html' },
+          { label: 'Tata', href: 'tata.html' },
+        ],
+      };
+    </script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

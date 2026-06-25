@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Livia | Gunung Kelir</title>
+    <meta name="description" content="Kalender anggota Livia untuk proker KKN Sub Unit Gunung Kelir." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <p class="eyebrow">KKN Sub Unit Gunung Kelir</p>
+        <h1 id="page-title"></h1>
+        <p class="hero-copy" id="page-subtitle"></p>
+        <div class="stats-strip">
+          <div><span>Jam Proker Pokok</span><strong id="primary-hours">0</strong></div>
+          <div><span>Jam Proker Bantu</span><strong id="support-hours">0</strong></div>
+        </div>
+        <div class="hero-actions">
+          <a class="btn primary" href="index.html">Kembali ke Beranda</a>
+          <a class="btn secondary" href="timeline.html">Timeline Utama</a>
+        </div>
+      </header>
+
+      <nav class="nav" id="page-nav"></nav>
+
+      <section class="panel">
+        <p class="section-note" id="page-summary"></p>
+        <form id="entry-form" class="entry-form">
+          <div class="form-grid">
+            <label>
+              Tanggal
+              <input name="date" type="date" required />
+            </label>
+            <label>
+              Jam mulai
+              <input name="startTime" type="time" required />
+            </label>
+            <label>
+              Jam selesai
+              <input name="endTime" type="time" required />
+            </label>
+            <label>
+              Kategori
+              <select name="category" required>
+                <option value="pokok">Proker Pokok</option>
+                <option value="bantu">Proker Bantu</option>
+              </select>
+            </label>
+            <label class="form-span-2">
+              Nama proker / kegiatan
+              <input name="activity" type="text" maxlength="80" required />
+            </label>
+            <label class="form-span-2">
+              Catatan
+              <input name="notes" type="text" maxlength="120" placeholder="Opsional" />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Simpan ke Timeline Bersama</button>
+            <p id="form-status" class="form-status">Data akan dikirim ke backend bersama jika URL Apps Script sudah diisi.</p>
+          </div>
+        </form>
+        <div id="calendar-list"></div>
+      </section>
+    </div>
+
+    <script>
+      window.PAGE_CONFIG = {
+        memberName: 'Livia',
+        personId: 'livia',
+        backendUrl: '',
+        title: 'Livia',
+        subtitle: 'Halaman kalender Livia dari 20 Juni sampai 8 Agustus.',
+        summary: 'Kalender ini sengaja dibuat sederhana supaya mudah dipakai di Google Sites.',
+        navLinks: [
+          { label: 'Beranda', href: 'index.html' },
+          { label: 'Timeline', href: 'timeline.html' },
+          { label: 'Naldo', href: 'naldo.html' },
+          { label: 'Hafiz', href: 'hafiz.html' },
+          { label: 'Rachma', href: 'rachma.html' },
+          { label: 'Livia', href: 'livia.html' },
+          { label: 'Laras', href: 'laras.html' },
+          { label: 'Tata', href: 'tata.html' },
+        ],
+      };
+    </script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
