@@ -228,8 +228,9 @@ async function syncSharedStore() {
   try {
     const remoteEntries = await fetchSharedEntriesFromBackend();
     if (remoteEntries.length > 0) {
-      setSharedEntries(remoteEntries);
-      return remoteEntries;
+      const normalized = normalizeEntries(remoteEntries);
+      setSharedEntries(normalized);
+      return normalized;
     }
   } catch {
     // Fallback ke penyimpanan lokal jika backend belum tersedia.
