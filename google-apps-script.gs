@@ -1,4 +1,4 @@
-const SPREADSHEET_ID = 'PASTE_YOUR_SHEET_ID_HERE';
+const SPREADSHEET_ID = '1vZzUZn4yOL62m4MxFbV7yV_DZZ9ouYDmS1hT0snFgwI';
 const SHEET_NAME = 'Entries';
 const HEADERS = ['id', 'timestamp', 'personId', 'memberName', 'date', 'startTime', 'endTime', 'category', 'activity', 'notes', 'hours'];
 
