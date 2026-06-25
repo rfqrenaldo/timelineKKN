@@ -57,13 +57,51 @@ function createEntryId() {
 }
 
 function normalizeEntry(entry) {
+  let date = entry.date ?? '';
+  if (date.includes('T')) {
+    const d = new Date(date);
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const dateNum = String(d.getDate()).padStart(2, '0');
+      date = `${year}-${month}-${dateNum}`;
+    }
+  }
+
+  let startTime = entry.startTime ?? '';
+  if (startTime.includes('T')) {
+    const d = new Date(startTime);
+    if (!isNaN(d.getTime())) {
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      startTime = `${hours}:${minutes}`;
+    }
+  }
+
+  let endTime = entry.endTime ?? '';
+  if (endTime.includes('T')) {
+    const d = new Date(endTime);
+    if (!isNaN(d.getTime())) {
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      endTime = `${hours}:${minutes}`;
+    }
+  }
+
+  if (startTime && startTime.length > 5 && startTime.includes(':')) {
+    startTime = startTime.substring(0, 5);
+  }
+  if (endTime && endTime.length > 5 && endTime.includes(':')) {
+    endTime = endTime.substring(0, 5);
+  }
+
   return {
     id: entry.id ?? createEntryId(),
     personId: entry.personId ?? pageConfig.personId ?? pageConfig.memberName ?? 'unknown',
     memberName: entry.memberName ?? pageConfig.memberName ?? pageConfig.title ?? 'Anggota',
-    date: entry.date ?? '',
-    startTime: entry.startTime ?? '',
-    endTime: entry.endTime ?? '',
+    date,
+    startTime,
+    endTime,
     category: entry.category ?? 'pokok',
     activity: entry.activity ?? '',
     notes: entry.notes ?? '',

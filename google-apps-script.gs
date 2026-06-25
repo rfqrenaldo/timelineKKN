@@ -1,15 +1,17 @@
-const SPREADSHEET_ID = '1vZzUZn4yOL62m4MxFbV7yV_DZZ9ouYDmS1hT0snFgwI';
+const SPREADSHEET_ID = '1Ux6qibeqzXhEafm3LYZfUY36UOYrJ0tPSO-t-rlMfY';
 const SHEET_NAME = 'Entries';
 const HEADERS = ['id', 'timestamp', 'personId', 'memberName', 'date', 'startTime', 'endTime', 'category', 'activity', 'notes', 'hours'];
 
 function doGet() {
-  const sheet = ensureSheet();
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ensureSheet(spreadsheet);
   const values = sheet.getDataRange().getValues();
   const rows = values.slice(1);
+  const timezone = spreadsheet.getSpreadsheetTimeZone();
 
   const entries = rows
     .filter((row) => row.some((value) => value !== ''))
-    .map((row) => rowToEntry(row));
+    .map((row) => rowToEntry(row, timezone));
 
   return ContentService.createTextOutput(JSON.stringify(entries)).setMimeType(ContentService.MimeType.JSON);
 }
@@ -18,7 +20,8 @@ function doPost(e) {
   const payload = parsePayload(e);
   const action = payload.action || 'create';
   const entry = normalizeEntry(payload.entry || payload);
-  const sheet = ensureSheet();
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ensureSheet(spreadsheet);
   const rows = sheet.getDataRange().getValues();
   const existingIndex = findEntryRowIndex(rows, entry.id);
 
@@ -69,10 +72,29 @@ function entryToRow(entry) {
   return HEADERS.map((header) => entry[header] ?? '');
 }
 
-function rowToEntry(row) {
+function rowToEntry(row, timezone) {
   const entry = {};
+  timezone = timezone || 'GMT';
   HEADERS.forEach((header, index) => {
-    entry[header] = row[index] ?? '';
+    let value = row[index] ?? '';
+    if (value instanceof Date) {
+      if (header === 'date') {
+        value = Utilities.formatDate(value, timezone, "yyyy-MM-dd");
+      } else if (header === 'startTime' || header === 'endTime') {
+        value = Utilities.formatDate(value, timezone, "HH:mm");
+      } else if (header === 'timestamp') {
+        value = value.toISOString();
+      }
+    } else if (value !== null && value !== undefined) {
+      value = String(value).trim();
+      if (header === 'date' && value.includes('T')) {
+        value = value.split('T')[0];
+      } else if ((header === 'startTime' || header === 'endTime') && value.includes('T')) {
+        const parts = value.split('T');
+        if (parts[1]) value = parts[1].substring(0, 5);
+      }
+    }
+    entry[header] = value;
   });
   entry.hours = Number(entry.hours || 0);
   return entry;
@@ -92,12 +114,12 @@ function findEntryRowIndex(rows, entryId) {
   return -1;
 }
 
-function ensureSheet() {
-  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+function ensureSheet(spreadsheet) {
+  const ss = spreadsheet || SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName(SHEET_NAME);
 
   if (!sheet) {
-    sheet = spreadsheet.insertSheet(SHEET_NAME);
+    sheet = ss.insertSheet(SHEET_NAME);
   }
 
   const currentHeaders = sheet.getLastRow() > 0 ? sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length)).getValues()[0] : [];
