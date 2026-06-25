@@ -1,1 +1,1 @@
-window.KKN_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz6-HDOjpXSTxlQ2IvZz9C2Ueyy8D5seQ6M2I7DlAqhf6IqT0pbupo2kIrmNgviTtsr/exec';
+window.KKN_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxVfyEj6a6ZiJLOkR271WEuHHNhr3jb1Q2N-KFsRlfiA3KV7w9a_J70Vf8v8eIvCm09/exec';
