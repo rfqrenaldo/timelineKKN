@@ -1,5 +1,5 @@
 const pageConfig = window.PAGE_CONFIG ?? {};
-const backendUrl = pageConfig.backendUrl ?? window.KKN_BACKEND_URL ?? '';
+const backendUrl = pageConfig.backendUrl || window.KKN_BACKEND_URL || '';
 
 const startDate = new Date(pageConfig.startDate ?? '2026-06-20T00:00:00');
 const endDate = new Date(pageConfig.endDate ?? '2026-08-08T00:00:00');
