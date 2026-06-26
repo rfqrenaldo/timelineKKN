@@ -3,7 +3,7 @@ const SHEET_NAME = 'Entries';
 const HEADERS = ['id', 'timestamp', 'personId', 'memberName', 'date', 'startTime', 'endTime', 'category', 'activity', 'notes', 'hours', 'completed'];
 
 function doGet() {
-  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ensureSheet(spreadsheet);
   const values = sheet.getDataRange().getValues();
   const rows = values.slice(1);
@@ -20,7 +20,7 @@ function doPost(e) {
   const payload = parsePayload(e);
   const action = payload.action || 'create';
   const entry = normalizeEntry(payload.entry || payload);
-  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ensureSheet(spreadsheet);
   const rows = sheet.getDataRange().getValues();
   const existingIndex = findEntryRowIndex(rows, entry.id);
@@ -122,7 +122,7 @@ function findEntryRowIndex(rows, entryId) {
 }
 
 function ensureSheet(spreadsheet) {
-  const ss = spreadsheet || SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = spreadsheet || SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(SHEET_NAME);
 
   if (!sheet) {
