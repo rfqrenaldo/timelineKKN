@@ -1,6 +1,6 @@
 const SPREADSHEET_ID = '1Ux6qibeqzXhEafm3LYZfUY36UOYrJ0tPSO-t-rlMfY';
 const SHEET_NAME = 'Entries';
-const HEADERS = ['id', 'timestamp', 'personId', 'memberName', 'date', 'startTime', 'endTime', 'category', 'activity', 'notes', 'hours'];
+const HEADERS = ['id', 'timestamp', 'personId', 'memberName', 'date', 'startTime', 'endTime', 'category', 'activity', 'notes', 'hours', 'completed'];
 
 function doGet() {
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -65,6 +65,7 @@ function normalizeEntry(entry) {
   normalized.id = normalized.id || Utilities.getUuid();
   normalized.timestamp = normalized.timestamp || new Date().toISOString();
   normalized.hours = Number(normalized.hours || 0);
+  normalized.completed = entry.completed === true || entry.completed === 'true' || entry.completed === 'TRUE';
   return normalized;
 }
 
@@ -86,17 +87,23 @@ function rowToEntry(row, timezone) {
         value = value.toISOString();
       }
     } else if (value !== null && value !== undefined) {
-      value = String(value).trim();
-      if (header === 'date' && value.includes('T')) {
-        value = value.split('T')[0];
-      } else if ((header === 'startTime' || header === 'endTime') && value.includes('T')) {
-        const parts = value.split('T');
-        if (parts[1]) value = parts[1].substring(0, 5);
+      if (header === 'completed') {
+        value = value === true || value === 'true' || value === 'TRUE' || value === 1;
+      } else {
+        value = String(value).trim();
+        if (header === 'date' && value.includes('T')) {
+          value = value.split('T')[0];
+        } else if ((header === 'startTime' || header === 'endTime') && value.includes('T')) {
+          const parts = value.split('T');
+          if (parts[1]) value = parts[1].substring(0, 5);
+        }
       }
     }
     entry[header] = value;
   });
   entry.hours = Number(entry.hours || 0);
+  // Ensure completed is boolean
+  entry.completed = entry.completed === true || entry.completed === 'true' || entry.completed === 'TRUE' || entry.completed === 1;
   return entry;
 }
 
@@ -122,12 +129,14 @@ function ensureSheet(spreadsheet) {
     sheet = ss.insertSheet(SHEET_NAME);
   }
 
-  const currentHeaders = sheet.getLastRow() > 0 ? sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length)).getValues()[0] : [];
-  const headersMatch = HEADERS.every((header, index) => currentHeaders[index] === header);
-
-  if (sheet.getLastRow() === 0 || !headersMatch) {
-    sheet.clear();
+  if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADERS);
+  } else {
+    const currentHeaders = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length)).getValues()[0];
+    const headersMatch = HEADERS.every((header, index) => currentHeaders[index] === header);
+    if (!headersMatch) {
+      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    }
   }
 
   return sheet;

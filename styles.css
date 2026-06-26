@@ -982,3 +982,45 @@ h3 {
     gap: 4px;
   }
 }
+
+/* Checklist Feature styles */
+.hour-completed-wrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.hour-completed-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid var(--line);
+  accent-color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hour-completed-checkbox:hover {
+  transform: scale(1.1);
+}
+
+.hour-entry-card.is-completed {
+  opacity: 0.65;
+  background-color: rgba(240, 240, 240, 0.5) !important;
+  border-left-color: var(--muted) !important;
+  box-shadow: none !important;
+}
+
+.hour-entry-card.is-completed .hour-entry-activity {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.shared-block.is-completed {
+  opacity: 0.6;
+  background: rgba(100, 116, 139, 0.12) !important;
+  border-color: rgba(100, 116, 139, 0.2) !important;
+  text-decoration: line-through;
+}

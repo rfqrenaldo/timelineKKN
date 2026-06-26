@@ -109,6 +109,7 @@ function normalizeEntry(entry) {
     activity: entry.activity ?? '',
     notes: entry.notes ?? '',
     hours: Number(entry.hours ?? 0),
+    completed: entry.completed === true || entry.completed === 'true' || entry.completed === 'TRUE',
     timestamp: entry.timestamp ?? new Date().toISOString(),
   };
 }
@@ -456,6 +457,14 @@ function renderEntryForm() {
     const entryId = editingEntryId ?? createEntryId();
     const isUpdate = Boolean(editingEntryId);
 
+    let completed = false;
+    if (isUpdate) {
+      const existing = getLocalEntries().find((e) => e.id === entryId);
+      if (existing) {
+        completed = existing.completed === true;
+      }
+    }
+
     const entry = {
       id: entryId,
       personId: pageConfig.personId ?? pageConfig.memberName ?? 'unknown',
@@ -467,6 +476,7 @@ function renderEntryForm() {
       activity,
       notes,
       hours,
+      completed,
       timestamp: new Date().toISOString(),
     };
 
@@ -577,8 +587,8 @@ async function renderSharedTimeline() {
                       const startColumn = hourToGridColumn(startHour);
                       const endColumn = hourToGridColumn(endHour);
                       return `
-                        <span class="shared-block" style="grid-column: ${startColumn} / ${endColumn};" title="${block.startTime} - ${block.endTime}${block.notes ? `\nCatatan: ${block.notes}` : ''}">
-                          <strong>${block.activity}</strong>
+                        <span class="shared-block ${block.completed ? 'is-completed' : ''}" style="grid-column: ${startColumn} / ${endColumn};" title="${block.startTime} - ${block.endTime}${block.notes ? `\nCatatan: ${block.notes}` : ''}">
+                          <strong>${block.completed ? '✓ ' : ''}${block.activity}</strong>
                           <small>${block.category === 'pokok' ? 'Proker Pokok' : 'Proker Bantu'}</small>
                         </span>
                       `;
@@ -718,8 +728,12 @@ function renderCalendar(entries = []) {
                                     ${matchingEntries
                                       .map(
                                         (entry) => `
-                                          <div class="hour-entry-card" data-category="${entry.category}">
+                                          <div class="hour-entry-card ${entry.completed ? 'is-completed' : ''}" data-category="${entry.category}">
                                             <div class="hour-entry-main">
+                                              <label class="hour-completed-wrapper" title="Tandai selesai">
+                                                <input type="checkbox" class="hour-completed-checkbox" data-action="calendar-complete" data-id="${entry.id}" ${entry.completed ? 'checked' : ''} />
+                                                <span class="hour-completed-checkmark"></span>
+                                              </label>
                                               <strong class="hour-entry-activity">${entry.activity}</strong>
                                               <span class="hour-entry-badge ${entry.category === 'pokok' ? 'is-primary' : 'is-support'}">
                                                 ${entry.category === 'pokok' ? 'Pokok' : 'Bantu'}
@@ -761,6 +775,41 @@ function renderCalendar(entries = []) {
       `,
     )
     .join('');
+
+  calendarList.querySelectorAll('input[data-action="calendar-complete"]').forEach((checkbox) => {
+    checkbox.addEventListener('change', async () => {
+      const entryId = checkbox.dataset.id;
+      const entry = entries.find((item) => item.id === entryId);
+      if (!entry) {
+        return;
+      }
+
+      entry.completed = checkbox.checked;
+
+      const card = checkbox.closest('.hour-entry-card');
+      if (card) {
+        card.classList.toggle('is-completed', entry.completed);
+      }
+
+      try {
+        upsertLocalEntry(entry);
+        await submitEntryToBackend(entry, 'update');
+        await syncSharedStore();
+
+        const refreshedEntries = await collectEntriesForMember();
+        updateHourTotalsFromEntries(refreshedEntries);
+        renderCalendar(refreshedEntries);
+      } catch (error) {
+        if (formStatus) {
+          formStatus.textContent = `Gagal mengubah status selesai: ${error.message}`;
+        }
+        checkbox.checked = !checkbox.checked;
+        if (card) {
+          card.classList.toggle('is-completed', checkbox.checked);
+        }
+      }
+    });
+  });
 
   calendarList.querySelectorAll('button[data-action="calendar-edit"]').forEach((button) => {
     button.addEventListener('click', () => {
