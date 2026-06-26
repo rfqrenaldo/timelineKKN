@@ -27,7 +27,10 @@ const monthNames = [
   'November',
   'Desember',
 ];
-const hourSlots = ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
+const hourSlots = [
+  '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00',
+  '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
+];
 
 const navList = document.getElementById('page-nav');
 const calendarList = document.getElementById('calendar-list');
@@ -215,7 +218,11 @@ async function fetchSharedEntriesFromBackend() {
     return [];
   }
 
-  const response = await fetch(url, { method: 'GET' });
+  const busterUrl = url.includes('?') 
+    ? `${url}&_ts=${Date.now()}` 
+    : `${url}?_ts=${Date.now()}`;
+
+  const response = await fetch(busterUrl, { method: 'GET' });
   if (!response.ok) {
     throw new Error('Backend tidak dapat dibaca');
   }
@@ -280,12 +287,7 @@ function mergeSharedEntries() {
 
   localEntries.forEach((entry) => {
     const existingIndex = combined.findIndex(
-      (candidate) =>
-        candidate.personId === entry.personId &&
-        candidate.date === entry.date &&
-        candidate.startTime === entry.startTime &&
-        candidate.endTime === entry.endTime &&
-        candidate.activity === entry.activity,
+      (candidate) => candidate.id === entry.id
     );
 
     if (existingIndex >= 0) {
@@ -662,6 +664,12 @@ function renderCalendar(entries = []) {
     return hour * 60 + minute;
   }
 
+  function getSlotRangeString(slotStr) {
+    const [hour, minute] = slotStr.split(':').map(Number);
+    const endHour = String(hour + 1).padStart(2, '0') + ':00';
+    return `${slotStr}-${endHour}`;
+  }
+
   function entryOverlapsSlot(entry, slotStr) {
     const entryStart = timeToMinutes(entry.startTime);
     const entryEnd = timeToMinutes(entry.endTime);
@@ -705,7 +713,7 @@ function renderCalendar(entries = []) {
                             if (matchingEntries.length > 0) {
                               return `
                                 <div class="hour-item has-entry">
-                                  <span class="hour-time">${slot}</span>
+                                  <span class="hour-time">${getSlotRangeString(slot)}</span>
                                   <div class="hour-entry-list">
                                     ${matchingEntries
                                       .map(
@@ -736,7 +744,7 @@ function renderCalendar(entries = []) {
 
                             return `
                               <div class="hour-item">
-                                <span class="hour-time">${slot}</span>
+                                <span class="hour-time">${getSlotRangeString(slot)}</span>
                                 <span class="hour-empty">Slot kalender</span>
                               </div>
                             `;

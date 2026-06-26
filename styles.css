@@ -528,7 +528,7 @@ h3 {
 
 .hour-item {
   display: grid;
-  grid-template-columns: 68px minmax(0, 1fr);
+  grid-template-columns: 100px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
   padding: 10px 0;
